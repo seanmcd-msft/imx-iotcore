@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+
+<PropertyGroup>
+  <CbsDir Condition="'$(CbsDir)' != ''">"$(CbsDir)"</CbsDir>
+</PropertyGroup>
+
+<Target Name="PkgGen"
+        Condition="'$(MissingWDKPkgGenSupport)'=='true' and '@(PkgGen)' != '' and '$(EnablePkgGen)' == 'true' and '$(SupportsPackaging)' != 'false' and '$(Platform)' != 'CHPE'"
+        BeforeTargets=""
+        AfterTargets="DriverTestSign;DriverProductionSign">
+
+  <Message Text="Generating driver package using pkggen.exe" />
+
+  <CheckIfRunningAsAdmin>
+    <Output PropertyName="IsAdmin" TaskParameter="IsAdmin" />
+  </CheckIfRunningAsAdmin>
+
+  <Error Text="Creation of driver package requires administrator privileges. Please restart Visual Studio as administrator to proceed."
+          Condition="'$(IsAdmin)' == 'false'" />
+
+  <Message Text="PackageGen is skipped when driver install option is set to Fast Reinstall"
+            Importance="High"
+            Condition="'$(InstallMode)' == 'FastDeploy'" />
+
+  <SetEnv Name="PATH"
+          Value  = "%PATH%;$(WDKContentRoot)Tools\bin\i386\;"
+          Prefix = "false" />
+  <SetEnv Name="SIGN_OEM"
+          Value  = "1"
+          Prefix = "false" />
+  <SetEnv Name="SIGN_WITH_TIMESTAMP"
+          Value  = "0"
+          Prefix = "false" />
+
+  <Exec Condition="'$(InstallMode)' != 'FastDeploy' and '@(PkgGen)' != '' and '%(PkgGen.ExcludedFromBuild)' != 'true'"
+          Command = "%(PkgGen.CommandLineTemplate) %(Identity) $(OutDir)$(ProjectName) %(PkgGen.AdditionalOptions) /config:%(PkgGen.ConfigurationFile) /build:%(PkgGen.BuildType) /variables:%(PkgGen.Variables)"
+          />
+
+</Target>
+
+</Project>
