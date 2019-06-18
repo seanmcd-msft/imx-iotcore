@@ -5,6 +5,7 @@
     <OEMName>NXP</OEMName>
   </PropertyGroup>
   <PropertyGroup>
+    <CheckMSVCComponents>false</CheckMSVCComponents> <!-- stop vs from using non-wdk directory structure to validate spectre libs, arguably this is bug in the platform toolset.props but i can't find who owns that. -->
     <!-- Determine package output path depending if this is a build or dev machine -->
     <MainOutput>$(SolutionDir)Build\$(Platform)\$(Configuration)\</MainOutput>
     <PkgOutput >$(SolutionDir)Build\$(Platform)\$(Configuration)\</PkgOutput>
@@ -17,6 +18,8 @@
     <WindowsTargetPlatformVersion>10.0.16299.0</WindowsTargetPlatformVersion>
     <TargetPlatformMinVersion>10.0.16299.0</TargetPlatformMinVersion>
     <LatestTargetPlatformMinVersion>10.0.16299.0</LatestTargetPlatformMinVersion>
+    <PlatformToolset Condition="'$(VCTargetsPath15)' != ''">v141</PlatformToolset>
+    <PlatformToolset Condition="'$(PlatformToolset)' == ''">v142</PlatformToolset>
   </PropertyGroup>
   <ItemDefinitionGroup>
     <ClCompile>
