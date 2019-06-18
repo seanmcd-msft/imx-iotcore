@@ -43,7 +43,14 @@ A table of the currently enabled features for each board can be found [here](Doc
 This repository uses submodules and should be cloned with `git clone --recurse-submodules`
 
 ### Required Tools
-The following tools are required to build the driver packages and IoT Core FFU: Visual Studio 2017, Windows Kits (ADK/SDK/WDK), and the IoT Core OS Packages.
+The following tools are required to build the driver packages and IoT Core FFU: Visual Studio 2017 or 2019, Windows Kits (ADK/SDK/WDK), and the IoT Core OS Packages.
+
+#### Visual Studio 2019
+* Make sure that you **install Visual Studio before the WDK** so that the WDK can install a required plugin.
+* Download [Visual Studio 2019](https://visualstudio.microsoft.com/).
+* During install select **Desktop development with C++**.
+* **Visual C++ compilers and libraries for ARM**
+* **Visual C++ compilers and libraries for ARM64**
 
 #### Visual Studio 2017
 * Make sure that you **install Visual Studio 2017 before the WDK** so that the WDK can install a required plugin.
@@ -56,12 +63,12 @@ The following tools are required to build the driver packages and IoT Core FFU: 
   * **Visual C++ compilers and libraries for ARM**
   * **Visual C++ compilers and libraries for ARM64**
 
-#### Windows Kits from Windows 10, version 1809
+#### Windows Kits from Windows 10, version 1809 or 1903
 * **IMPORTANT: Make sure that any previous versions of the ADK and WDK have been uninstalled!**
-* Install [ADK version 1809](https://docs.microsoft.com/en-us/windows-hardware/get-started/adk-install#other-adk-downloads)
-* Install [WDK version 1809](https://docs.microsoft.com/en-us/windows-hardware/drivers/other-wdk-downloads#step-2-install-the-wdk)
+* Install [ADK version 1903](https://docs.microsoft.com/en-us/windows-hardware/get-started/adk-install) or [ADK version 1809](https://docs.microsoft.com/en-us/windows-hardware/get-started/adk-install#other-adk-downloads)
+* Install [WDK version 1903](https://docs.microsoft.com/en-us/windows-hardware/drivers/download-the-wdk) or [WDK version 1809](https://docs.microsoft.com/en-us/windows-hardware/drivers/other-wdk-downloads#step-2-install-the-wdk)
   * Make sure that you allow the Visual Studio Extension to install after the WDK install completes.
-* If the WDK installer says it could not find the correct SDK version, install [SDK version 1809](https://developer.microsoft.com/en-us/windows/downloads/sdk-archive)
+* If the WDK installer says it could not find the correct SDK version, install the matching [SDK version](https://developer.microsoft.com/en-us/windows/downloads/sdk-archive)
 
 #### IoT Core OS Packages
 * Visit the [Windows IoT Core Downloads](https://www.microsoft.com/en-us/software-download/windows10IoTCore#!) page and download "Windows 10 IoT Core Packages – Windows 10 IoT Core, version 1809 (LTSC)".
@@ -82,7 +89,7 @@ Test certificates must be installed to generate driver packages on a development
 
 ### FFU Generation
 
-1. Launch Visual Studio 2017 as Administrator.
+1. Launch Visual Studio as Administrator.
 2. Open the solution iMXPlatform.sln (imx-iotcore\build\solution\iMXPlatform).
 3. Change the build type from Debug to Release. Change the build flavor from ARM to ARM64 if building for iMX8.
 4. To build press Ctrl-Shift-B or choose Build -> Build Solution from menu. This will compile all driver packages then generate the FFU.
@@ -164,7 +171,7 @@ The firmware code can be found in the following repos:
 
 BSP - Generated at build time. Contains Board Support Packages for the [IoT ADK AddonKit](https://github.com/ms-iot/iot-adk-addonkit).
 
-build - Contains Board Packages, build scripts, and the VS2017 solution file.
+build - Contains Board Packages, build scripts, and the Visual Studio solution file.
 
 driver - Contains driver sources.
 

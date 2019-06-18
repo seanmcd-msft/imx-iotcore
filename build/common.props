@@ -18,9 +18,38 @@
     <WindowsTargetPlatformVersion>10.0.16299.0</WindowsTargetPlatformVersion>
     <TargetPlatformMinVersion>10.0.16299.0</TargetPlatformMinVersion>
     <LatestTargetPlatformMinVersion>10.0.16299.0</LatestTargetPlatformMinVersion>
-    <PlatformToolset Condition="'$(VCTargetsPath15)' != ''">v141</PlatformToolset>
-    <PlatformToolset Condition="'$(PlatformToolset)' == ''">v142</PlatformToolset>
+    <MissingWDKPkgGenSupport Condition="'$(PkgGen_DefaultDriverDest)' == ''">true</MissingWDKPkgGenSupport>
   </PropertyGroup>
+
+
+  <PropertyGroup Condition="'$(MissingWDKPkgGenSupport)' == 'true'">
+        <EnablePkgGen Condition="'$(EnablePkgGen)' == '' and '$(DriverTargetPlatform)' != 'Desktop'">true</EnablePkgGen>
+        <PkgGen_DefaultDriverDest Condition="'$(IsKernelModeToolset)' == 'true'">DRIVER_DEST=drivers</PkgGen_DefaultDriverDest>
+        <PkgGen_DefaultDriverDest Condition="'$(IsUserModeToolset)' == 'true'">DRIVER_DEST=drivers\umdf</PkgGen_DefaultDriverDest>
+  </PropertyGroup>
+
+  <PropertyGroup
+    Condition="'$(MissingWDKPkgGenSupport)' == 'true' and '$(PkgGenBeforeTargets)' == '' and '$(PkgGenAfterTargets)' == '' and '$(ConfigurationType)' != 'Makefile'">
+    <PkgGenBeforeTargets>ApiValidator</PkgGenBeforeTargets>
+    <PkgGenAfterTargets>AfterLink</PkgGenAfterTargets>
+  </PropertyGroup>
+
+  <ItemDefinitionGroup Condition="'$(MissingWDKPkgGenSupport)' == 'true'">
+    <PkgGen>
+      <ConfigurationFile>"$(WDKContentRoot)Tools\bin\i386\pkggen.cfg.xml"</ConfigurationFile>
+      <Version>1.0.0.0</Version>
+      <BuildType>fre</BuildType>
+      <CPU>$(Platform)</CPU>
+      <CommandLineTemplate>&quot;$(WDKContentRoot)Tools\bin\i386\pkggen.exe&quot;</CommandLineTemplate>
+    </PkgGen>
+  </ItemDefinitionGroup>
+
+  <ItemDefinitionGroup>
+    <PkgGen>
+      <Variables>&quot;HIVE_ROOT=$(CoreSystem_HivesPath);WIM_ROOT=$(CoreSystem_HivesPath);_RELEASEDIR=$(PackageDir);TARGETNAME=$(TargetName);TARGETEXT=$(TargetExt);$(PkgGen_DefaultDriverDest);OEMNAME=$(OEMName)&quot;"</Variables>
+    </PkgGen>
+  </ItemDefinitionGroup>
+
   <ItemDefinitionGroup>
     <ClCompile>
       <SupportJustMyCode>false</SupportJustMyCode>
@@ -31,9 +60,5 @@
     <BuildLog>
       <Path>$(SolutionDir)Build\$(Platform)\$(Configuration)\Logs\$(MSBuildProjectName).log</Path>
     </BuildLog>
-    <PkgGen>
-      <Variables>"HIVE_ROOT=$(CoreSystem_HivesPath);WIM_ROOT=$(CoreSystem_HivesPath);_RELEASEDIR=$(PackageDir);TARGETNAME=$(TargetName);TARGETEXT=$(TargetExt);$(PkgGen_DefaultDriverDest);OEMNAME=$(OEMName)"</Variables>
-    </PkgGen>
   </ItemDefinitionGroup>
-  <ItemGroup />
 </Project>
