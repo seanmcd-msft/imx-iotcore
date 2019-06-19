@@ -201,6 +201,7 @@
     </PkgGen>
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
+  <Import Project="..\..\..\build\common.targets" />
   <ImportGroup Label="ExtensionTargets">
   </ImportGroup>
 </Project>

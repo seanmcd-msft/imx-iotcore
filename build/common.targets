@@ -7,7 +7,7 @@
 
 <Target Name="PkgGen"
         Condition="'$(MissingWDKPkgGenSupport)'=='true' and '@(PkgGen)' != '' and '$(EnablePkgGen)' == 'true' and '$(SupportsPackaging)' != 'false' and '$(Platform)' != 'CHPE'"
-        BeforeTargets=""
+        BeforeTargets="PackageTestSign;PackageProductionSign"
         AfterTargets="DriverTestSign;DriverProductionSign">
 
   <Message Text="Generating driver package using pkggen.exe" />
@@ -34,7 +34,7 @@
           Prefix = "false" />
 
   <Exec Condition="'$(InstallMode)' != 'FastDeploy' and '@(PkgGen)' != '' and '%(PkgGen.ExcludedFromBuild)' != 'true'"
-          Command = "%(PkgGen.CommandLineTemplate) %(Identity) $(OutDir)$(ProjectName) %(PkgGen.AdditionalOptions) /config:%(PkgGen.ConfigurationFile) /build:%(PkgGen.BuildType) /variables:%(PkgGen.Variables)"
+          Command = "%(PkgGen.CommandLineTemplate) %(Identity) $(OutDir)$(ProjectName) +diagnostic %(PkgGen.AdditionalOptions) /config:%(PkgGen.ConfigurationFile) /build:%(PkgGen.BuildType) /variables:%(PkgGen.Variables)"
           />
 
 </Target>

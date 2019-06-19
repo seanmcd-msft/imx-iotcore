@@ -46,7 +46,7 @@
 
   <ItemDefinitionGroup>
     <PkgGen>
-      <Variables>&quot;HIVE_ROOT=$(CoreSystem_HivesPath);WIM_ROOT=$(CoreSystem_HivesPath);_RELEASEDIR=$(PackageDir);TARGETNAME=$(TargetName);TARGETEXT=$(TargetExt);$(PkgGen_DefaultDriverDest);OEMNAME=$(OEMName)&quot;"</Variables>
+      <Variables>&quot;HIVE_ROOT=$(CoreSystem_HivesPath);WIM_ROOT=$(CoreSystem_HivesPath);_RELEASEDIR=$(PackageDir);TARGETNAME=$(TargetName);TARGETEXT=$(TargetExt);$(PkgGen_DefaultDriverDest);OEMNAME=$(OEMName)&quot;</Variables>
     </PkgGen>
   </ItemDefinitionGroup>
 

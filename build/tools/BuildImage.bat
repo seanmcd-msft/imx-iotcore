@@ -82,31 +82,45 @@ SET FFU_FILE_NAME=%REPO_BUILD_ROOT%\solution\iMXPlatform\Build\FFU\%BOARD_NAME%\
 
 if "%SolutionDir%"=="" (
     SET SolutionDir=%BOARD_BUILD_PATH%\
-	echo SolutionDir=%SolutionDir%
 )
+echo SolutionDir=%SolutionDir%
+echo pwd=%cd%
 REM
 echo Export packages to one directory
 REM
 set BSPPKG_DIR=%REPO_BUILD_ROOT%\solution\iMXPlatform\Build\FFU\bspcabs\%PLATFORM%\%Configuration%
 set PKG_VER=1.0.0.0
 if not exist %BSPPKG_DIR% ( mkdir %BSPPKG_DIR% )
-
-if not exist %REPO_BUILD_ROOT%\..\..\b\%Configuration%\%PLATFORM% (dir /S /B %REPO_BUILD_ROOT%\solution\iMXPlatform\Build\%PLATFORM%\%Configuration%\*.cab > filelist.txt)
-if exist %REPO_BUILD_ROOT%\..\..\b\%Configuration%\%PLATFORM% (dir /S /B %REPO_BUILD_ROOT%\..\..\b\%Configuration%\%PLATFORM%\*.cab > filelist.txt)
-
+if exist %REPO_BUILD_ROOT%\..\..\b\%Configuration%\%PLATFORM% (
+    dir /S /B %REPO_BUILD_ROOT%\..\..\b\%Configuration%\%PLATFORM%\*.cab > filelist.txt 2>nul
+) else (
+    dir /S /B %REPO_BUILD_ROOT%\solution\iMXPlatform\Build\%PLATFORM%\%Configuration%\*.cab > filelist.txt 2>nul
+)
 REM Append the %BOARD_NAME% folder to the end of the scrape list so the correct SV.PlatExtensions.UpdateOS.cab is in bspcabs
-if not exist %REPO_BUILD_ROOT%\..\..\b\%Configuration%\%PLATFORM% (dir /S /B %REPO_BUILD_ROOT%\solution\iMXPlatform\Build\%PLATFORM%\%Configuration%\%BOARD_NAME%\*.cab >> filelist.txt)
-if exist %REPO_BUILD_ROOT%\..\..\b\%Configuration%\%PLATFORM% (dir /S /B %REPO_BUILD_ROOT%\..\..\b\%Configuration%\%PLATFORM%\%BOARD_NAME%\*.cab >> filelist.txt)
-
+if exist %REPO_BUILD_ROOT%\..\..\b\%Configuration%\%PLATFORM% (
+    dir /S /B %REPO_BUILD_ROOT%\..\..\b\%Configuration%\%PLATFORM%\%BOARD_NAME%\*.cab >> filelist.txt 2>nul
+) else (
+    dir /S /B %REPO_BUILD_ROOT%\solution\iMXPlatform\Build\%PLATFORM%\%Configuration%\%BOARD_NAME%\*.cab >> filelist.txt 2>nul
+)
 for /f "delims=" %%i in (filelist.txt) do (
     echo %%i
     copy "%%i" "%BSPPKG_DIR%" >nul 2>nul
+)
+if not exist filelist.txt (
+    @echo no cab packages found
+    exit /b 1
 )
 del filelist.txt >nul
 REM
 echo Run Feature Merger
 REM
+echo FeatureMerger %BOARD_BUILD_PATH%\%BOARD_NAME%_FMFileList.xml %BSPPKG_DIR% %PKG_VER% %BOARD_BUILD_PATH%\MergedFMs /InputFMDir:%BOARD_BUILD_PATH%\InputFMs /Languages:en-us /Resolutions:1024x768 /ConvertToCBS /variables:_cputype=%PLATFORM%;buildtype=fre;releasetype=production 
 FeatureMerger %BOARD_BUILD_PATH%\%BOARD_NAME%_FMFileList.xml %BSPPKG_DIR% %PKG_VER% %BOARD_BUILD_PATH%\MergedFMs /InputFMDir:%BOARD_BUILD_PATH%\InputFMs /Languages:en-us /Resolutions:1024x768 /ConvertToCBS /variables:_cputype=%PLATFORM%;buildtype=fre;releasetype=production >fmlog.txt
+if %errorlevel% GTR 0 (
+    echo error: Feature Merger failed el = %errorlevel%
+    type fmlog.txt
+    exit /b %errorlevel%
+)
 del %BSPPKG_DIR%\*.spkg >nul 2>nul
 del %BSPPKG_DIR%\*.merged.txt >nul 2>nul
 
